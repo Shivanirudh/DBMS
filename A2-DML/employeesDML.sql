@@ -58,8 +58,7 @@ REM ****** the output by first name.
 SELECT first_name,salary,hire_date,department_id
 FROM employees
 WHERE salary BETWEEN 5000 AND 15000 AND
-      (first_name LIKE 'A%' OR first_name LIKE 'J%' OR
-       first_name LIKE 'K%' OR first_name LIKE 'S%')
+      (SUBSTR(first_name,1,1) IN ("A","K","J","S"))
 ORDER BY first_name;
 
 REM*************************************************************************
@@ -68,7 +67,7 @@ REM ****** 18. Display the experience of employees in no. of years and months wh
 REM ****** Label the columns as: (EMPLOYEE_ID, FIRST_NAME, HIRE_DATE, EXPYRS, EXPMONTHS)
 
 SELECT employee_id,first_name,hire_date,
-       2020-EXTRACT(YEAR FROM hire_date) AS "EXPYRS",
+       EXTRACT(YEAR FROM CURRENT_TIMESTAMP)-EXTRACT(YEAR FROM hire_date) AS "EXPYRS",
        12-EXTRACT(MONTH FROM hire_date) AS "EXPMONTHS"
 FROM employees;
 
