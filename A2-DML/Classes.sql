@@ -56,7 +56,7 @@ REM ******6. For the battleships having at least 9 number of guns or the ships w
 
 UPDATE Classes
 SET displacement=1.1*displacement
-WHERE numGuns>=9 AND bore>=15;
+WHERE numGuns>=9 OR bore>=15;
 
 SELECT * 
 FROM Classes;
