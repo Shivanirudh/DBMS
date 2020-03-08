@@ -37,7 +37,7 @@ REM ****** MANAGERS.
 
 SELECT employee_id,first_name,last_name,job_id,salary
 FROM employees
-WHERE job_id LIKE '___MGR';
+WHERE job_id LIKE '___M%';
 
 REM*************************************************************************
 
@@ -58,7 +58,7 @@ REM ****** the output by first name.
 SELECT first_name,salary,hire_date,department_id
 FROM employees
 WHERE salary BETWEEN 5000 AND 15000 AND
-      (SUBSTR(first_name,1,1) IN ("A","K","J","S"))
+      (SUBSTR(first_name,1,1) IN ('A','K','J','S'))
 ORDER BY first_name;
 
 REM*************************************************************************
@@ -67,9 +67,10 @@ REM ****** 18. Display the experience of employees in no. of years and months wh
 REM ****** Label the columns as: (EMPLOYEE_ID, FIRST_NAME, HIRE_DATE, EXPYRS, EXPMONTHS)
 
 SELECT employee_id,first_name,hire_date,
-       EXTRACT(YEAR FROM CURRENT_TIMESTAMP)-EXTRACT(YEAR FROM hire_date) AS "EXPYRS",
-       12-EXTRACT(MONTH FROM hire_date) AS "EXPMONTHS"
-FROM employees;
+       FLOOR((CURRENT_DATE-hire_date)/365) AS "EXPYRS",
+       FLOOR(FLOOR(MOD((CURRENT_DATE-hire_date),365))/30) AS "EXPMONTHS"
+FROM employees
+WHERE EXTRACT(YEAR FROM hire_date)>1998;
 
 REM*************************************************************************
 
@@ -84,7 +85,8 @@ REM ****** 20. Show the number of employees hired by yearwise. Sort the result b
 
 SELECT COUNT(*) "NUMBER OF EMPLOYEES", EXTRACT (YEAR FROM hire_date) AS "YEAR"
 FROM employees
-GROUP BY EXTRACT(YEAR FROM hire_date);
+GROUP BY EXTRACT(YEAR FROM hire_date)
+ORDER BY EXTRACT(YEAR FROM hire_date);
 
 REM*************************************************************************
 
@@ -93,7 +95,8 @@ REM ****** department. Exclude the employee(s) who are not in any department. In
 REM ****** department(s) with at least 2 employees and the average salary is more than 10000. Sort the
 REM ****** result by minimum salary in descending order.
 
-SELECT MIN(salary) "MINIMUM SALARY",
+SELECT department_id,
+	   MIN(salary) "MINIMUM SALARY",
        MAX(salary) "MAXIMUM SALARY",
        AVG(salary) "AVG SALARY",
        COUNT(*) "NUMBER OF EMPLOYEES"

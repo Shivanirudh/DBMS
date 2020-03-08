@@ -74,56 +74,103 @@ AND R.orig_airport != 'Madison';
 REM ****** 8. Display the flight number, aircraft type, source and destination airport of the aircraft having 
 REM ****** maximum number of flights to Honolulu.
 
-SELECT fl.flno
-FROM flights f JOIN aircraft a ON f.aid=a.aid JOIN routes r ON r.routeid=f.rid RIGHT OUTER JOIN fl_schedule fl ON f.flightno=fl.flno
+SELECT f.flightno, a.type, r.orig_airport, r.dest_airport 
+FROM flights f JOIN aircraft a on f.aid=a.aid JOIN routes r ON f.rid=r.routeid
 WHERE r.dest_airport='Honolulu'
-GROUP BY fl.flno
-HAVING COUNT(*) >= ALL(SELECT COUNT(*)
-			FROM flights f JOIN aircraft a ON f.aid=a.aid JOIN routes r ON r.routeid=f.rid RIGHT OUTER JOIN fl_schedule fl ON f.flightno=fl.flno
-			WHERE r.dest_airport='Honolulu'
-			GROUP BY fl.flno);
+ 	  AND a.aid =(SELECT flights.aid
+				  FROM routes, flights 
+				  WHERE dest_airport='Honolulu' AND routes.routeid=flights.rid
+				  GROUP BY flights.aid
+				  HAVING count(*)=(SELECT max(count)
+		 						   FROM (SELECT count(*) AS count
+								   FROM routes, flights WHERE dest_airport='Honolulu' AND routes.routeid=flights.rid
+								   GROUP BY flights.aid)));
+
 
 REM ****** 9. Display the pilot(s) who are certified exclusively to pilot all aircraft in a type.
-REM ****** 9. Display the pilot(s) who are certified exclusively to pilot all aircraft in a type.
 
-REM SELECT type,COUNT(*)
-REM FROM employee e JOIN certified c ON e.eid=c.eid JOIN aircraft a ON c.aid=a.aid
-REM GROUP BY e.eid,a.type;
-
-SELECT type,COUNT(*)
-FROM aircraft
-GROUP BY type;
-
-SELECT e.eid,COUNT(e.eid),a.type,COUNT(a.type)
-FROM employee e JOIN certified c ON e.eid=c.eid JOIN aircraft a ON c.aid=a.aid 
-GROUP BY e.eid,a.type
-HAVING COUNT(a.type)=1;
-
-SELECT e.eid,type,COUNT(e.eid)
-FROM employee e JOIN certified c ON e.eid=c.eid JOIN aircraft a ON c.aid=a.aid 
-GROUP BY e.eid,a.type
-HAVING COUNT(e.eid)=1 AND
-    COUNT(a.type)=(SELECT COUNT(*)
-                 FROM aircraft a1 
-                 WHERE a1.type=a.type
-                 GROUP BY type);
+SELECT DISTINCT eid, type
+FROM certified c JOIN aircraft a ON c.aid=a.aid 
+WHERE a.type = ALL(SELECT a1.type 
+				   FROM aircraft a1 JOIN certified c1 ON a1.aid=c1.aid 
+				   WHERE c.eid = c1.eid)
+GROUP BY eid, type
+HAVING COUNT(*)=(SELECT COUNT(*) 
+				 FROM aircraft a2 
+				 WHERE a2.type=a.type);
     
 REM ****** 10. Name the employee(s) who is earning the maximum salary among the airport having 
 REM ****** maximum number of departures.
+
+ SELECT e.ename,e.salary	 
+ FROM employee e
+ WHERE e.salary	= ( SELECT MAX(e.salary)
+    				FROM employee e JOIN certified c ON c.eid=e.eid 
+    				WHERE c.aid IN	
+    					(SELECT f.aid 
+  						 FROM flights f JOIN routes r ON f.rID = r.routeID
+    					 WHERE r.orig_airport =	
+    					 	(SELECT orig_airport 
+    						 FROM (SELECT r.orig_airport, COUNT(fl.departs)
+   						   	 FROM routes r JOIN flights f ON r.routeID = f.rID JOIN fl_schedule fl ON fl.flno = f.flightNo
+   							 GROUP BY r.orig_airport  
+   							 ORDER BY COUNT(fl.departs) DESC) 
+  						WHERE rownum = 1)));
 
 REM ****** 11. Display the departure chart as follows:
 REM ****** flight number, departure(date,airport,time), destination airport, arrival time, aircraft name
 REM ****** for the flights from New York airport during 15 to 19th April 2005. Make sure that the route
 REM ****** contains at least two flights in the above specified condition.
 
+SELECT f.flightNo,fl.departs || ' ' || r.orig_airport || ' ' || fl.dtime AS "DEPARTURE",r.dest_airport,fl.atime,a.aname
+FROM flights f JOIN fl_schedule fl ON f.flightNo = fl.flno JOIN routes r ON  r.routeID = f.rID JOIN aircraft a ON f.aid = a.aid
+WHERE r.orig_airport = 'New York' AND	fl.departs BETWEEN TO_DATE('15/04/2005', 'DD/MM/YYYY') AND TO_DATE('19/04/2005', 'DD/MM/YYYY')
+	AND (SELECT count(*)
+		  FROM(SELECT fl.flno
+				FROM fl_schedule fl JOIN flights f ON f.flightno=fl.flno JOIN routes r ON f.rid=r.routeid
+				WHERE (fl.departs BETWEEN '15-APR-2005' AND '19-APR-2005')
+				AND r.orig_airport='New York')) >= 2;
+
+
 REM ****** 12. A customer wants to travel from Madison to New York with no more than two changes of 
 REM ****** flight. List the flight numbers from Madison if the customer wants to arrive in New York by 
 REM ****** 6.50 p.m.
 
+SELECT f.flightNo
+FROM flights f
+WHERE f.flightNo IN((SELECT f0.flightNo
+  					 FROM flights f0 JOIN routes r ON r.routeID = f0.rID JOIN fl_schedule fl ON f0.flightNo = fl.flno
+  	 				 WHERE r.orig_airport = 'Madison' AND r.dest_airport = 'New York'	AND fl.atime <= 1850)
+  	 						UNION
+  	 						(SELECT	f0.flightNo
+  	 						FROM flights f0,flights f1, routes r0, routes r1, fl_schedule fl0, fl_schedule fl1 
+ 	 						WHERE r0.routeID = f0.rID AND f0.flightNo = fl0.flno
+ 	 						AND r1.routeID = f1.rID	AND f1.flightNo = fl1.flno
+ 	 						AND	r0.orig_airport = 'Madison' AND r0.dest_airport <> 'New York'
+ 	 						AND	r1.orig_airport = r0.dest_airport AND r1.dest_airport = 'New York' 
+ 	 						AND fl1.atime <= 1850 AND fl1.dtime > fl0.atime)
+ 	 					);
+
 REM ****** 13. Display the id and name  of employee(s) who are not pilots.
 
+SELECT eid,ename	
+FROM ((SELECT * 
+       FROM employee) MINUS
+	  (SELECT e.* 
+       FROM employee e JOIN certified c ON e.eid = c.eid));
 
 REM ****** 14. Display the id and name of employee(s) who pilots the aircraft from Los Angels and Detroit
 REM ****** airport.
 
-REM ****** @Z:/A3/air_DML.sql
+SELECT e.eid,e.ename
+FROM employee e 
+WHERE e.eid	IN ((SELECT	e.eid	
+	  			 FROM employee e JOIN certified c ON e.eid = c.eid JOIN flights f ON f.aid = c.aid JOIN routes r ON r.routeID = f.rID
+  	 			 WHERE r.orig_airport	= 'Los Angeles')	
+				INTERSECT
+  	 			 (SELECT	e.eid	
+	  			 FROM employee e JOIN certified c ON e.eid = c.eid JOIN flights f ON f.aid = c.aid JOIN routes r ON r.routeID = f.rID
+  	 			 WHERE r.orig_airport	= 'Detroit'));
+
+
+REM ****** @Z:/A3/air_DML.sqlSSS
