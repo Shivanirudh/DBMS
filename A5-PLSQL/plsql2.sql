@@ -37,5 +37,3 @@ BEGIN
 	
 END;
 /
-
-REM ****** @Z:/A5/pizza_plsql2.sql

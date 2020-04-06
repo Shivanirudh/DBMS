@@ -14,7 +14,9 @@ DECLARE
 BEGIN
 	pitype := '&pitype';
 	
-	SELECT pizza_type INTO ptype FROM pizza	WHERE pizza_type= pitype;
+	SELECT pizza_type INTO ptype 
+	FROM pizza
+	WHERE pizza_type = pitype;
 
 	IF SQL%FOUND THEN 
 		dbms_output.put_line(pitype || ' is currently available. ');
