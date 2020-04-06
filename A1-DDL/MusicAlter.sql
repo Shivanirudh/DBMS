@@ -81,5 +81,3 @@ SELECT * FROM SONG;
 
 REM ****** Sungby Database
 SELECT * FROM SUNGBY;
-
-
