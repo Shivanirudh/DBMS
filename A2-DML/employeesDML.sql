@@ -42,7 +42,7 @@ WHERE job_id LIKE '___M%';
 REM*************************************************************************
 
 REM ****** 16. Display the details of employees other than sales representatives (id, first name, hire date,
-REM ****** job id, salary and dept id) who are hired after ‘01May1999’ or whose salary is at least 10000.
+REM ****** job id, salary and dept id) who are hired after â€˜01May1999â€™ or whose salary is at least 10000.
 
 SELECT employee_id,first_name,hire_date,job_id,salary,department_id
 FROM employees

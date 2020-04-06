@@ -14,11 +14,11 @@ REM HR.EMPLOYEES has a self referencing foreign key to this table.
 
 Prompt ******  Creating EMPLOYEES table ....
 
-CREATE TABLE employees
+CREATE TABLE employee
     ( employee_id    NUMBER(6)
     , first_name     VARCHAR2(20)
     , last_name      VARCHAR2(25)
-	 CONSTRAINT     emp_last_name_nn  NOT NULL
+	 CONSTRAINT     emp_l_name_nn  NOT NULL
     , email          VARCHAR2(25)
 	CONSTRAINT     emp_email_nn  NOT NULL
     , phone_number   VARCHAR2(20)
@@ -359,4 +359,3 @@ INSERT INTO employees VALUES
 COMMIT;
 
 REM ***************************END OF insert data into the EMPLOYEES table
-
