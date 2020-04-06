@@ -219,8 +219,3 @@ FROM fl_schedule
 WHERE flno = 'SQ-11';
 
 ROLLBACK TO D;
-
-
-REM @Z:/A4/air_cre.sql
-REM @Z:/A4/air_pop.sql
-REM @Z:/A4/views.sql
