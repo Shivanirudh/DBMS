@@ -4,6 +4,7 @@ REM ****** Also find the total quantity ordered for the given order number as sh
 DECLARE
 	no_of_orders NUMBER(3);
 	order_id CHAR(5);
+	
 	c_name customer.cust_name % TYPE;
 	p_type pizza.pizza_type % TYPE;
 	qty order_list.qty % TYPE;
@@ -16,7 +17,7 @@ DECLARE
 
 BEGIN
 	order_id := '&order_id';
-    
+	no_of_orders:=0;    
     	OPEN order_details;
     
     	FETCH order_details INTO p_type, qty, c_name;
@@ -29,9 +30,11 @@ BEGIN
         	dbms_output.put_line(RPAD('PIZZA TYPE', 13)||RPAD('QTY.', 4));
         	
 		WHILE order_details%FOUND LOOP
+			no_of_orders := no_of_orders + qty;
             		dbms_output.put_line(RPAD(p_type, 13)||RPAD(qty, 4));
             		FETCH order_details INTO p_type, qty,c_name;
         	END LOOP;
+		dbms_output.put_line('Total Quantity: '||no_of_orders); 
         
 	END IF;
 
