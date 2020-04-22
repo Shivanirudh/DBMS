@@ -1,0 +1,247 @@
+SQL> @D:/Anirudh/SSN/DBMS/A6/Function.sql
+SQL> REM customer(cust_id, cust_name, address, phone)
+SQL> REM pizza (pizza_id, pizza_type, unit_price)
+SQL> REM orders(order_no, cust_id, order_date ,delv_date, total_amt)
+SQL> REM order_list(order_no, pizza_id, qty)
+SQL> REM ****** 1. Write a stored function to display the total number of pizza's ordered by the given order number.
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION no_order
+  2  	     (order_id IN VARCHAR2)
+  3  	     RETURN  NUMBER IS
+  4  
+  5  	     qty NUMBER(3);
+  6  
+  7  	     CURSOR order_details IS
+  8  		     SELECT SUM(ol.qty)
+  9  		     FROM order_list ol
+ 10  		     WHERE ol.order_no = order_id
+ 11  		     GROUP BY ol.order_no;
+ 12  
+ 13  BEGIN
+ 14  	     OPEN order_details;
+ 15  
+ 16  	     FETCH order_details INTO qty;
+ 17  
+ 18  	     IF order_details%NOTFOUND THEN
+ 19  		     dbms_output.put_line('Specified order does not exist.');
+ 20  
+ 21  	     END IF;
+ 22  
+ 23  	     CLOSE order_details;
+ 24  	     RETURN qty;
+ 25  END;
+ 26  /
+
+Function created.
+
+SQL> 
+SQL> SELECT no_order('OP100')
+  2  FROM dual;
+
+NO_ORDER('OP100')                                                                                                                                                                                                                                         
+-----------------                                                                                                                                                                                                                                         
+               11                                                                                                                                                                                                                                         
+
+SQL> 
+SQL> SELECT no_order('OP300')
+  2  FROM dual;
+
+NO_ORDER('OP300')                                                                                                                                                                                                                                         
+-----------------                                                                                                                                                                                                                                         
+                3                                                                                                                                                                                                                                         
+
+SQL> 
+SQL> @D:/Anirudh/SSN/DBMS/A6/Procedure1.sql
+SQL> REM customer(cust_id, cust_name, address, phone)
+SQL> REM pizza (pizza_id, pizza_type, unit_price)
+SQL> REM orders(order_no, cust_id, order_date ,delv_date, total_amt)
+SQL> REM order_list(order_no, pizza_id, qty)
+SQL> 
+SQL> REM 2. Write a PL/SQL block to calculate the total amount, discount and billable amount
+SQL> REM (Amount to be paid) as given below:
+SQL> REM For total amount > 2000 and total amount < 5000: Discount=5%
+SQL> REM For total amount > 5000 and total amount < 10000: Discount=10%
+SQL> REM For total amount > 10000: Discount=20%
+SQL> REM Calculate the billable amount (after the discount) and update the same in orders table.
+SQL> REM Bill Amount = Total – Discount.
+SQL> 
+SQL> CREATE OR REPLACE PROCEDURE calcBill
+  2  	     (ord_id IN VARCHAR2) AS
+  3  
+  4  	     disc NUMBER(3,2);
+  5  	     disc_amt NUMBER(7,2);
+  6  	     bill_amt NUMBER(7,2);
+  7  	     tot_amt NUMBER(7,2);
+  8  
+  9  	     CURSOR ord_cur IS
+ 10  		     SELECT SUM(ol.qty * p.unit_price)
+ 11  		     FROM pizza p JOIN order_list ol ON p.pizza_id=ol.pizza_id
+ 12  			  JOIN orders o ON o.order_no=ol.order_no
+ 13  		     WHERE o.order_no=ord_id;
+ 14  BEGIN
+ 15  
+ 16  	     OPEN ord_cur;
+ 17  
+ 18  	     FETCH ord_cur INTO tot_amt;
+ 19  
+ 20  	     CLOSE ord_cur;
+ 21  
+ 22  	     IF tot_amt > 10000 THEN
+ 23  		     disc := 0.20;
+ 24  	     ELSIF tot_amt > 5000 THEN
+ 25  		     disc := 0.10;
+ 26  	     ELSIF tot_amt > 2000 THEN
+ 27  		     disc := 0.05;
+ 28  	     ELSE
+ 29  		     disc := 0.0;
+ 30  	     END IF;
+ 31  
+ 32  	     disc_amt := disc * tot_amt;
+ 33  	     bill_amt := tot_amt - disc_amt;
+ 34  
+ 35  	     UPDATE orders
+ 36  	     SET total_amt = tot_amt
+ 37  	     WHERE order_no=ord_id;
+ 38  
+ 39  	     UPDATE orders
+ 40  	     SET discount=disc,billable_amt=bill_amt
+ 41  	     WHERE order_no = ord_id;
+ 42  
+ 43  --      dbms_output.put_line('Total Amount: '||tot_amt);
+ 44  --      dbms_output.put_line('Discount: '||disc);
+ 45  --      dbms_output.put_line('Discount Amount: '||disc_amt);
+ 46  --      dbms_output.put_line('Billable Amount: '||bill_amt);
+ 47  END;
+ 48  /
+
+Procedure created.
+
+SQL> 
+SQL> BEGIN
+  2  	     calcBill('OP500');
+  3  END;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> SELECT *
+  2  FROM orders
+  3  WHERE order_no = 'OP500';
+
+ORDER CUST ORDER_DAT DELV_DATE  TOTAL_AMT   DISCOUNT BILLABLE_AMT                                                                                                                                                                                         
+----- ---- --------- --------- ---------- ---------- ------------                                                                                                                                                                                         
+OP500 c001 29-JUN-15 01-JUL-15       2500        .05         2375                                                                                                                                                                                         
+
+SQL> @D:/Anirudh/SSN/DBMS/A6/Procedure2.sql
+SQL> REM customer(cust_id, cust_name, address, phone)
+SQL> REM pizza (pizza_id, pizza_type, unit_price)
+SQL> REM orders(order_no, cust_id, order_date ,delv_date, total_amt)
+SQL> REM order_list(order_no, pizza_id, qty)
+SQL> 
+SQL> REM 3. For the given order number, write a PL/SQL block to print the order as
+SQL> REM shown below:
+SQL> 
+SQL> 
+SQL> CREATE OR REPLACE PROCEDURE showBill
+  2  	     (ord_id IN VARCHAR2) AS
+  3  
+  4  	     ord_no orders.order_no%TYPE;
+  5  	     ord_date orders.order_date%TYPE;
+  6  	     cname customer.cust_name%TYPE;
+  7  	     cphone customer.phone%TYPE;
+  8  
+  9  	     ptype pizza.pizza_type%TYPE;
+ 10  	     qty order_list.qty%TYPE;
+ 11  	     uprice pizza.unit_price%TYPE;
+ 12  
+ 13  	     tot_amt NUMBER(7,2);
+ 14  	     disc NUMBER(3,2);
+ 15  	     bill_amt NUMBER(7,2);
+ 16  
+ 17  	     sno NUMBER(2);
+ 18  	     amt NUMBER(5);
+ 19  
+ 20  	     CURSOR cust_order IS
+ 21  		     SELECT o.order_no,o.order_date,c.cust_name,c.phone
+ 22  		     FROM orders o JOIN customer c ON c.cust_id=o.cust_id
+ 23  		     WHERE o.order_no=ord_id;
+ 24  
+ 25  	     CURSOR pizza_order IS
+ 26  		     SELECT p.pizza_type,ol.qty,p.unit_price
+ 27  		     FROM pizza p JOIN order_list ol ON p.pizza_id=ol.pizza_id
+ 28  		     WHERE ol.order_no=ord_id;
+ 29  BEGIN
+ 30  	     sno:=0;
+ 31  	     OPEN cust_order;
+ 32  	     FETCH cust_order INTO ord_no,ord_date,cname,cphone;
+ 33  	     dbms_output.put_line('************************************************************');
+ 34  	     dbms_output.put_line('Order Number:'||ord_no||CHR(9)||'Customer Name:'||cname);
+ 35  	     dbms_output.put_line('Order Date: '||ord_date ||CHR(9)||'Phone:'||cphone);
+ 36  	     dbms_output.put_line('************************************************************');
+ 37  	     CLOSE cust_order;
+ 38  	     dbms_output.put_line('Sno'||CHR(9)||'Pizza Type'||CHR(9)||'Qty'||CHR(9)||'Price'||CHR(9)||'Amount');
+ 39  
+ 40  	     FOR x in pizza_order LOOP
+ 41  		     sno:=sno+1;
+ 42  		     amt:=x.qty*x.unit_price;
+ 43  		     dbms_output.put_line(sno||CHR(9)||x.pizza_type||CHR(9)||CHR(9)||x.qty||CHR(9)||x.unit_price||CHR(9)||amt);
+ 44  	     END LOOP;
+ 45  
+ 46  	     calcBill(ord_id);
+ 47  	     SELECT total_amt,discount,billable_amt INTO tot_amt,disc,bill_amt
+ 48  	     FROM orders
+ 49  	     WHERE order_no=ord_id;
+ 50  
+ 51  	     dbms_output.put_line('____________________________________________________________');
+ 52  	     dbms_output.put_line(CHR(9)||'Total - '||CHR(9)||no_order(ord_id)||CHR(9)||CHR(9)||tot_amt);
+ 53  	     dbms_output.put_line('____________________________________________________________');
+ 54  	     dbms_output.put_line('Total Amount'||CHR(9)||':Rs.'||tot_amt);
+ 55  	     dbms_output.put_line('Discount('||disc*100||'%)'||CHR(9)||':Rs. '||disc*tot_amt);
+ 56  	     dbms_output.put_line('____________________________________________________________');
+ 57  	     dbms_output.put_line('Amount to be paid'||CHR(9)||':Rs.'||bill_amt);
+ 58  	     dbms_output.put_line('____________________________________________________________');
+ 59  	     dbms_output.put_line('Great Offers! Discount up to 25% on DIWALI Festival Day...');
+ 60  	     dbms_output.put_line('************************************************************');
+ 61  
+ 62  
+ 63  END;
+ 64  /
+
+Procedure created.
+
+SQL> REM *****************************************************************************
+SQL> DECLARE
+  2  	     ord_id VARCHAR2(5);
+  3  BEGIN
+  4  	     ord_id:='&ord_id';
+  5  
+  6  	     showBill(ord_id);
+  7  END;
+  8  /
+Enter value for ord_id: OP100
+old   4: 	ord_id:='&ord_id';
+new   4: 	ord_id:='OP100';
+************************************************************                                                                                                                                                                                              
+Order Number:OP100	Customer Name:Hari                                                                                                                                                                                                                     
+Order Date: 28-JUN-15	Phone:9001200031                                                                                                                                                                                                                    
+************************************************************                                                                                                                                                                                              
+Sno	Pizza Type	Qty	Price	Amount                                                                                                                                                                                                                           
+1	pan		3	130	390                                                                                                                                                                                                                                          
+2	grilled		2	230	460                                                                                                                                                                                                                                      
+3	italian		1	200	200                                                                                                                                                                                                                                      
+4	spanish		5	260	1300                                                                                                                                                                                                                                     
+____________________________________________________________                                                                                                                                                                                              
+	Total - 	11		2350                                                                                                                                                                                                                                        
+____________________________________________________________                                                                                                                                                                                              
+Total Amount	:Rs.2350                                                                                                                                                                                                                                     
+Discount(5%)	:Rs. 117.5                                                                                                                                                                                                                                   
+____________________________________________________________                                                                                                                                                                                              
+Amount to be paid	:Rs.2232.5                                                                                                                                                                                                                              
+____________________________________________________________                                                                                                                                                                                              
+Great Offers! Discount up to 25% on DIWALI Festival Day...                                                                                                                                                                                                
+************************************************************                                                                                                                                                                                              
+
+PL/SQL procedure successfully completed.
+
+SQL> spool off;

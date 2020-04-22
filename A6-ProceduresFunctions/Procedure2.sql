@@ -19,7 +19,9 @@ CREATE OR REPLACE PROCEDURE showBill
 	qty order_list.qty%TYPE;
 	uprice pizza.unit_price%TYPE;
 	
-	total_amt orders.total_amt%TYPE;
+	tot_amt NUMBER(7,2);
+	disc NUMBER(3,2);
+	bill_amt NUMBER(7,2);
 	
 	sno NUMBER(2);
 	amt NUMBER(5);
@@ -51,13 +53,18 @@ BEGIN
 	END LOOP;
 	
 	calcBill(ord_id);
-	SELECT total_amt INTO total_amt
+	SELECT total_amt,discount,billable_amt INTO tot_amt,disc,bill_amt
 	FROM orders
 	WHERE order_no=ord_id;
 
 	dbms_output.put_line('____________________________________________________________');
-	dbms_output.put_line(CHR(9)||'Total - '||CHR(9)||no_order(ord_id)||CHR(9)||CHR(9)||total_amt);
+	dbms_output.put_line(CHR(9)||'Total - '||CHR(9)||no_order(ord_id)||CHR(9)||CHR(9)||tot_amt);
 	dbms_output.put_line('____________________________________________________________');
+	dbms_output.put_line('Total Amount'||CHR(9)||':Rs.'||tot_amt);
+	dbms_output.put_line('Discount('||disc*100||'%)'||CHR(9)||':Rs. '||disc*tot_amt);
+	dbms_output.put_line('____________________________________________________________');
+	dbms_output.put_line('Amount to be paid'||CHR(9)||':Rs.'||bill_amt);
+	dbms_output.put_line('____________________________________________________________');  
 	dbms_output.put_line('Great Offers! Discount up to 25% on DIWALI Festival Day...');
 	dbms_output.put_line('************************************************************');
 	

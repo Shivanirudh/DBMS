@@ -8,43 +8,32 @@ CREATE OR REPLACE FUNCTION no_order
 	(order_id IN VARCHAR2) 
 	RETURN  NUMBER IS
 	
-	no_of_orders NUMBER(3);
 	qty NUMBER(3);
     
 	CURSOR order_details IS
-		SELECT ol.qty
+		SELECT SUM(ol.qty)
 		FROM order_list ol 
-		WHERE ol.order_no = order_id;
+		WHERE ol.order_no = order_id
+		GROUP BY ol.order_no;
 
 BEGIN
-    	no_of_orders:=0;
     	OPEN order_details;
     
     	FETCH order_details INTO qty;
     
-	IF order_details%FOUND THEN
-		WHILE order_details%FOUND LOOP
-			no_of_orders:=no_of_orders+qty;
-            		FETCH order_details INTO qty;
-        	END LOOP;
-	ELSE
+	IF order_details%NOTFOUND THEN
 		dbms_output.put_line('Specified order does not exist.');
+		
 	END IF;
 
 	CLOSE order_details;
-	RETURN no_of_orders;
+	RETURN qty;
 END;
 /
 
-DECLARE
-	order_id VARCHAR2(10);
-	qty NUMBER(3);
-	
-BEGIN
-	qty:=0;
-	order_id := '&order_id';
-	qty:=no_order(order_id);
-	dbms_output.put_line(order_id ||' has '||qty||' pizzas');
-END;
+SELECT no_order('OP100') 
+FROM dual;
 
-/
+SELECT no_order('OP300')
+FROM dual;
+

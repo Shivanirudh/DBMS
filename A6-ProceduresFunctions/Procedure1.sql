@@ -14,51 +14,57 @@ REM Bill Amount = Total – Discount.
 CREATE OR REPLACE PROCEDURE calcBill
 	(ord_id IN VARCHAR2) AS
 	
-	discount NUMBER(3,2);
+	disc NUMBER(3,2);
 	disc_amt NUMBER(7,2);
-	billable_amt NUMBER(7,2);
+	bill_amt NUMBER(7,2);
 	tot_amt NUMBER(7,2);
 
 	CURSOR ord_cur IS
-		SELECT ol.qty,p.unit_price
+		SELECT SUM(ol.qty * p.unit_price)
 		FROM pizza p JOIN order_list ol ON p.pizza_id=ol.pizza_id 
 		     JOIN orders o ON o.order_no=ol.order_no
 		WHERE o.order_no=ord_id;
 BEGIN
-	tot_amt:=0;
 	
-	FOR x IN ord_cur LOOP
-		tot_amt := tot_amt + (x.qty * x.unit_price);
-	END LOOP;
+	OPEN ord_cur;
+	
+	FETCH ord_cur INTO tot_amt;
+	
+	CLOSE ord_cur;
 	
 	IF tot_amt > 10000 THEN
-		discount := 0.20;
+		disc := 0.20;
 	ELSIF tot_amt > 5000 THEN
-		discount := 0.10;
+		disc := 0.10;
 	ELSIF tot_amt > 2000 THEN
-		discount := 0.05;
+		disc := 0.05;
 	ELSE
-		discount := 0.0;
+		disc := 0.0;
 	END IF;
 		
-	disc_amt := discount * tot_amt;
-	billable_amt := tot_amt - disc_amt;
+	disc_amt := disc * tot_amt;
+	bill_amt := tot_amt - disc_amt;
 	
 	UPDATE orders
-	SET total_amt = tot_amt,discount=discount,billable_amt=billable_amt
+	SET total_amt = tot_amt
 	WHERE order_no=ord_id;
+
+	UPDATE orders
+	SET discount=disc,billable_amt=bill_amt
+	WHERE order_no = ord_id;
 	
-	dbms_output.put_line('Total Amount: '||tot_amt);
-	dbms_output.put_line('Discount: '||discount);
-	dbms_output.put_line('Discount Amount: '||disc_amt);
-	dbms_output.put_line('Billable Amount: '||billable_amt);
+--	dbms_output.put_line('Total Amount: '||tot_amt);
+--	dbms_output.put_line('Discount: '||disc);
+--	dbms_output.put_line('Discount Amount: '||disc_amt);
+--	dbms_output.put_line('Billable Amount: '||bill_amt);
 END;
 /
 
-DECLARE
-	ord_id VARCHAR2(10);
 BEGIN
-	ord_id:='&ord_id';
-	calcBill(ord_id);	
+	calcBill('OP500');	
 END;
 /
+
+SELECT *
+FROM orders
+WHERE order_no = 'OP500';
