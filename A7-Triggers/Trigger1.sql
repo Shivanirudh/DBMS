@@ -8,16 +8,27 @@ WHEN(NEW.arrives<NEW.departs OR OLD.arrives<NEW.departs OR NEW.arrives<OLD.depar
 		IF INSERTING THEN
 			raise_application_error(-20000,'Insert error:arrival date is before the departure date.');
 		ELSIF UPDATING THEN
-			raise_application_error(-20000,'Update error:arrival date is before the departure date.');
+			raise_application_error(-20001,'Update error:arrival date is before the departure date.');
 		END IF;
 	END;
 
 /
 
-UPDATE fl_schedule SET departs='19-JUN-05' WHERE arrives='19-APR-05';
+-- Insert error
+INSERT INTO fl_schedule VALUES('JJ-7456','20-JUN-2020',0829,'17-JUN-2020',1019,20);
 
+-- Proper insert
+INSERT INTO fl_schedule VALUES('JJ-7456','17-JUN-2020',0829,'20-JUN-2020',1019,20);
 
-UPDATE fl_schedule SET arrives='15-APR-05' WHERE departs='17-APR-05';
+-- Update error when updating departs
+UPDATE fl_schedule SET departs='25-JUN-2020' WHERE arrives='20-JUN-2020' AND flno = 'JJ-7456';
 
+-- Proper update when updating departs
+UPDATE fl_schedule SET departs='17-JUN-2020' WHERE arrives='20-JUN-2020' AND flno = 'JJ-7456';
 
-INSERT INTO fl_schedule VALUES('AF-12','20-JUN-2020',0829,'17-JUN-2020',1019,20);
+-- Update error when updating arrives
+UPDATE fl_schedule SET arrives='14-JUN-2020' WHERE departs='17-JUN-2020' AND flno = 'JJ-7456';
+
+-- Proper update when updating arrives
+UPDATE fl_schedule SET arrives='22-JUN-2020' WHERE departs='17-JUN-2020' AND flno = 'JJ-7456';
+

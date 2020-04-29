@@ -1,0 +1,191 @@
+SQL> @D:/Anirudh/SSN/DBMS/A7/Trigger1.sql
+SQL> REM 1. The date of arrival should be always later than or on the same date of departure.
+SQL> 
+SQL> CREATE OR REPLACE TRIGGER date_check
+  2  BEFORE INSERT OR UPDATE ON fl_schedule
+  3  FOR EACH ROW
+  4  WHEN(NEW.arrives<NEW.departs OR OLD.arrives<NEW.departs OR NEW.arrives<OLD.departs)
+  5  	     BEGIN
+  6  		     IF INSERTING THEN
+  7  			     raise_application_error(-20000,'Insert error:arrival date is before the departure date.');
+  8  		     ELSIF UPDATING THEN
+  9  			     raise_application_error(-20001,'Update error:arrival date is before the departure date.');
+ 10  		     END IF;
+ 11  	     END;
+ 12  
+ 13  /
+
+Trigger created.
+
+SQL> 
+SQL> -- Insert error
+SQL> INSERT INTO fl_schedule VALUES('JJ-7456','20-JUN-2020',0829,'17-JUN-2020',1019,20);
+INSERT INTO fl_schedule VALUES('JJ-7456','20-JUN-2020',0829,'17-JUN-2020',1019,20)
+            *
+ERROR at line 1:
+ORA-20000: Insert error:arrival date is before the departure date. 
+ORA-06512: at "HR.DATE_CHECK", line 3 
+ORA-04088: error during execution of trigger 'HR.DATE_CHECK' 
+
+
+SQL> 
+SQL> -- Proper insert
+SQL> INSERT INTO fl_schedule VALUES('JJ-7456','17-JUN-2020',0829,'20-JUN-2020',1019,20);
+
+1 row created.
+
+SQL> 
+SQL> -- Update error when updating departs
+SQL> UPDATE fl_schedule SET departs='25-JUN-2020' WHERE arrives='20-JUN-2020' AND flno = 'JJ-7456';
+UPDATE fl_schedule SET departs='25-JUN-2020' WHERE arrives='20-JUN-2020' AND flno = 'JJ-7456'
+       *
+ERROR at line 1:
+ORA-20001: Update error:arrival date is before the departure date. 
+ORA-06512: at "HR.DATE_CHECK", line 5 
+ORA-04088: error during execution of trigger 'HR.DATE_CHECK' 
+
+
+SQL> 
+SQL> -- Proper update when updating departs
+SQL> UPDATE fl_schedule SET departs='17-JUN-2020' WHERE arrives='20-JUN-2020' AND flno = 'JJ-7456';
+
+1 row updated.
+
+SQL> 
+SQL> -- Update error when updating arrives
+SQL> UPDATE fl_schedule SET arrives='14-JUN-2020' WHERE departs='17-JUN-2020' AND flno = 'JJ-7456';
+UPDATE fl_schedule SET arrives='14-JUN-2020' WHERE departs='17-JUN-2020' AND flno = 'JJ-7456'
+       *
+ERROR at line 1:
+ORA-20001: Update error:arrival date is before the departure date. 
+ORA-06512: at "HR.DATE_CHECK", line 5 
+ORA-04088: error during execution of trigger 'HR.DATE_CHECK' 
+
+
+SQL> 
+SQL> -- Proper update when updating arrives
+SQL> UPDATE fl_schedule SET arrives='22-JUN-2020' WHERE departs='17-JUN-2020' AND flno = 'JJ-7456';
+
+1 row updated.
+
+SQL> 
+SQL> @D:/Anirudh/SSN/DBMS/A7/Trigger2.sql
+SQL> REM 2. Flight number CX7520 is scheduled only on Tuesday, Friday and Sunday.
+SQL> 
+SQL> CREATE OR REPLACE TRIGGER flight_check
+  2  BEFORE INSERT OR UPDATE ON fl_schedule
+  3  FOR EACH ROW
+  4  WHEN(NEW.flno LIKE 'CX-7520')
+  5  	     DECLARE
+  6  	     dayofweek NUMBER;
+  7  
+  8  	     BEGIN
+  9  		     SELECT  TO_CHAR(:NEW.departs,'D')	INTO dayofweek FROM DUAL;
+ 10  		     IF dayofweek NOT IN (1,3,6) THEN
+ 11  			     dbms_output.put_line(dayofweek);
+ 12  			     RAISE_APPLICATION_ERROR(-20000,'Flight CX7520 is only scheduled on TUESDAY, FRIDAY AND SUNDAY');
+ 13  		     END IF;
+ 14  	     END;
+ 15  /
+
+Trigger created.
+
+SQL> 
+SQL> -- Inserting flight other than CX-7520 to depart on a Wednesday
+SQL> INSERT INTO fl_schedule VALUES('JJ-7456','22-APR-2020',0829,'22-APR-2020',1019,20);
+
+1 row created.
+
+SQL> 
+SQL> -- Inserting flight CX-7520 to depart on a Wednesday
+SQL> INSERT INTO fl_schedule VALUES('CX-7520','22-APR-2020',0829,'22-APR-2020',1019,20);
+4                                                                                                                                                     
+INSERT INTO fl_schedule VALUES('CX-7520','22-APR-2020',0829,'22-APR-2020',1019,20)
+            *
+ERROR at line 1:
+ORA-20000: Flight CX7520 is only scheduled on TUESDAY, FRIDAY AND SUNDAY 
+ORA-06512: at "HR.FLIGHT_CHECK", line 8 
+ORA-04088: error during execution of trigger 'HR.FLIGHT_CHECK' 
+
+
+SQL> 
+SQL> -- Inserting flight CX-7520 to depart on a Friday
+SQL> INSERT INTO fl_schedule VALUES('CX-7520','24-APR-2020',0829,'24-APR-2020',1019,20);
+
+1 row created.
+
+SQL> 
+SQL> --Updating above inserted flight CX-7520 to depart on a saturday
+SQL> UPDATE fl_schedule SET departs='18-APR-2020' WHERE flno = 'CX-7520' AND arrives = '24-APR-2020';
+7                                                                                                                                                     
+UPDATE fl_schedule SET departs='18-APR-2020' WHERE flno = 'CX-7520' AND arrives = '24-APR-2020'
+       *
+ERROR at line 1:
+ORA-20000: Flight CX7520 is only scheduled on TUESDAY, FRIDAY AND SUNDAY 
+ORA-06512: at "HR.FLIGHT_CHECK", line 8 
+ORA-04088: error during execution of trigger 'HR.FLIGHT_CHECK' 
+
+
+SQL> 
+SQL> --Updating above inserted flight CX-7520 to depart on a sunday
+SQL> UPDATE fl_schedule SET departs='19-APR-2020' WHERE flno = 'CX-7520' AND arrives = '24-APR-2020';
+
+1 row updated.
+
+SQL> @D:/Anirudh/SSN/DBMS/A7/Trigger3.sql
+SQL> REM 3. An aircraft is assigned to a flight only if its cruising range is more than the distance of the flights’ route.
+SQL> 
+SQL> CREATE OR REPLACE TRIGGER distance_check
+  2  BEFORE INSERT OR UPDATE ON flights
+  3  FOR EACH ROW
+  4  
+  5  	     DECLARE
+  6  		     range NUMBER(5);
+  7  		     distance NUMBER(5);
+  8  	     BEGIN
+  9  		     SELECT a.cruisingrange INTO range FROM aircraft a WHERE a.aid=:NEW.aid;
+ 10  		     SELECT r.distance INTO distance FROM routes r WHERE r.routeID=:NEW.rID;
+ 11  
+ 12  		     IF range < distance THEN
+ 13  			     raise_application_error(-20000,'Cruising range must be greater than distance of journey.');
+ 14  		     END IF;
+ 15  	     END;
+ 16  /
+
+Trigger created.
+
+SQL> 
+SQL> -- Inserting instance where range < distance
+SQL> INSERT INTO flights VALUES('LTF-543','LW104',4);
+INSERT INTO flights VALUES('LTF-543','LW104',4)
+            *
+ERROR at line 1:
+ORA-01403: no data found 
+ORA-06512: at "HR.DISTANCE_CHECK", line 6 
+ORA-04088: error during execution of trigger 'HR.DISTANCE_CHECK' 
+
+
+SQL> 
+SQL> -- Inserting instance where range > distance
+SQL> INSERT INTO flights VALUES('LTF-543','CN151',4);
+
+1 row created.
+
+SQL> 
+SQL> -- Update instance to range < distance
+SQL> UPDATE flights SET aid=7 WHERE flightNo='JJ-7456';
+UPDATE flights SET aid=7 WHERE flightNo='JJ-7456'
+       *
+ERROR at line 1:
+ORA-20000: Cruising range must be greater than distance of journey. 
+ORA-06512: at "HR.DISTANCE_CHECK", line 9 
+ORA-04088: error during execution of trigger 'HR.DISTANCE_CHECK' 
+
+
+SQL> 
+SQL> --Update instance to range > distance
+SQL> UPDATE flights SET aid=9 WHERE flightNo='JJ-7456';
+
+1 row updated.
+
+SQL> spool off;
