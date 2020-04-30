@@ -1,0 +1,583 @@
+SQL> @D:/Anirudh/SSN/DBMS/A9/DBDesign.sql
+SQL> REM Consider the following relation Company with the set of functional REM dependencies:
+SQL> REM COMPANY(empid, name, address, bdate, sex, salary, dno, dname, mgr_id, pno, REM pname, pdno, hrs)
+SQL> REM fd1: empid -> name, address, bdate, sex, salary, dno
+SQL> REM fd2: dno -> dname, mgr_id
+SQL> REM fd3: pno -> pname, pdno where pdno is the department controlling the project.
+SQL> REM fd4: empid, pno -> hrs
+SQL> 
+SQL> REM primary key:(empid,pno)
+SQL> 
+SQL> REM ************ PART - A ******************
+SQL> 
+SQL> REM ************ 1NF TABLE *****************
+SQL> REM *****************************************************************
+SQL> REM 1) CREATE TABLE IN 1NF
+SQL> REM *****************************************************************
+SQL> 
+SQL> DROP TABLE company;
+
+Table dropped.
+
+SQL> 
+SQL> CREATE TABLE company(
+  2  	     empid NUMBER(9),
+  3  	     name VARCHAR2(20),
+  4  	     address VARCHAR2(25),
+  5  	     bdate DATE,
+  6  	     sex CHAR(1),
+  7  	     salary NUMBER(6,1),
+  8  	     dno NUMBER(1),
+  9  	     dname VARCHAR2(15),
+ 10  	     mgr_id NUMBER(9),
+ 11  	     pno NUMBER(2),
+ 12  	     pname VARCHAR2(15),
+ 13  	     pdno NUMBER(1),
+ 14  	     hrs NUMBER(3,1),
+ 15  	     CONSTRAINT company_pk PRIMARY KEY(empid,pno)
+ 16  );
+
+Table created.
+
+SQL> 
+SQL> REM ******************************************************************
+SQL> REM 2) POPULATE 1NF TABLE
+SQL> REM ******************************************************************
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     123456789, 'John B Smith', '731 Fondren, Houston, TX',
+  3  	     '09-Jan-1965', 'M', 30000, 5, 'Research', 333445555,
+  4  	     1, 'ProductX', 5, 32.5
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     123456789, 'John B Smith', '731 Fondren, Houston, TX',
+  3  	     '09-Jan-1965', 'M', 30000, 5, 'Research', 333445555,
+  4  	     2, 'ProductY', 5, 7.5
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     333445555, 'Franklin T Wong', '638 Voss, Houston, TX',
+  3  	     '08-Dec-1955', 'M', 40000, 5, 'Research', 888665555,
+  4  	     2, 'ProductY', 5, 10.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     333445555, 'Franklin T Wong', '638 Voss, Houston, TX',
+  3  	     '08-Dec-1955', 'M', 40000, 5, 'Research', 888665555,
+  4  	     3, 'ProductZ', 5, 10.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     333445555, 'Franklin T Wong', '638 Voss, Houston, TX',
+  3  	     '08-Dec-1955', 'M', 40000, 5, 'Research', 888665555,
+  4  	     10, 'Computerization', 4, 10.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     333445555, 'Franklin T Wong', '638 Voss, Houston, TX',
+  3  	     '08-Dec-1955', 'M', 40000, 5, 'Research', 888665555,
+  4  	     20, 'Reorganization', 1, 10.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     999887777, 'Alicia J Zelaya', '3321 Castle, Spring, TX',
+  3  	     '19-Jan-1968', 'F', 25000, 4, 'Administration', 987654321,
+  4  	     30, 'Newbenefits', 4, 30.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     999887777, 'Alicia J Zelaya', '3321 Castle, Spring, TX',
+  3  	     '19-Jan-1968', 'F', 25000, 4, 'Administration', 987654321,
+  4  	     10, 'Computerization', 4, 10.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     987654321, 'Jennifer S Wallace', '291 Berry, Bellaire, TX',
+  3  	     '20-Jun-1941', 'F', 43000, 4, 'Administration', 888665555,
+  4  	     30, 'Newbenefits', 4, 20.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     987654321, 'Jennifer S Wallace', '291 Berry, Bellaire, TX',
+  3  	     '20-Jun-1941', 'F', 43000, 4, 'Administration', 888665555,
+  4  	     20, 'Reorganization', 1, 15.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     666884444, 'Ramesh K Narayan', '975 Fire Oak, Humble, TX',
+  3  	     '15-Sep-1962', 'M', 38000, 5, 'Research', 333445555,
+  4  	     3, 'ProductZ', 5, 40.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     453453453, 'Joyce A English', '5631 Rice, Houston TX',
+  3  	     '31-Jul-1972', 'F', 25000, 5, 'Research', 333445555,
+  4  	     1, 'ProductX', 5, 20.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     453453453,'Joyce A English','5631 Rice, Houston TX',
+  3  	     '31-Jul-1972', 'F', 25000, 5, 'Research', 333445555,
+  4  	     2, 'ProductY', 5, 20.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     987987987, 'Ahmad V Jabbar', '980 Dallas, Houston, TX',
+  3  	     '29-Mar-1969', 'M', 25000, 4, 'Administration', 987654321,
+  4  	     10, 'Computerization', 4, 35.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     987987987,'Ahmad V Jabbar', '980 Dallas, Houston, TX',
+  3  	     '29-Mar-1969', 'M', 25000, 4, 'Administration', 987654321,
+  4  	     30, 'Newbenefits', 4, 5.0
+  5  );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company VALUES(
+  2  	     888665555, 'James E Borg', '450 Stone, Houston, TX',
+  3  	     '10-Nov-1937', 'M', 55000, 1, 'Headquarters', NULL,
+  4  	     20, 'Reorganization', 1, NULL
+  5  );
+
+1 row created.
+
+SQL> REM *****************************************************************
+SQL> REM 3) DISPLAY THE RECORDS - SELECT 1NF TABLE
+SQL> REM *****************************************************************
+SQL> 
+SQL> SELECT *
+  2  FROM company;
+
+     EMPID NAME                 ADDRESS                   BDATE     S     SALARY        DNO DNAME               MGR_ID        PNO PNAME                 PDNO        HRS                                                                                                                                                                                                                                                                                                                                             
+---------- -------------------- ------------------------- --------- - ---------- ---------- --------------- ---------- ---------- --------------- ---------- ----------                                                                                                                                                                                                                                                                                                                                             
+ 123456789 John B Smith         731 Fondren, Houston, TX  09-JAN-65 M      30000          5 Research         333445555          1 ProductX                 5       32.5                                                                                                                                                                                                                                                                                                                                             
+ 123456789 John B Smith         731 Fondren, Houston, TX  09-JAN-65 M      30000          5 Research         333445555          2 ProductY                 5        7.5                                                                                                                                                                                                                                                                                                                                             
+ 333445555 Franklin T Wong      638 Voss, Houston, TX     08-DEC-55 M      40000          5 Research         888665555          2 ProductY                 5         10                                                                                                                                                                                                                                                                                                                                             
+ 333445555 Franklin T Wong      638 Voss, Houston, TX     08-DEC-55 M      40000          5 Research         888665555          3 ProductZ                 5         10                                                                                                                                                                                                                                                                                                                                             
+ 333445555 Franklin T Wong      638 Voss, Houston, TX     08-DEC-55 M      40000          5 Research         888665555         10 Computerization          4         10                                                                                                                                                                                                                                                                                                                                             
+ 333445555 Franklin T Wong      638 Voss, Houston, TX     08-DEC-55 M      40000          5 Research         888665555         20 Reorganization           1         10                                                                                                                                                                                                                                                                                                                                             
+ 999887777 Alicia J Zelaya      3321 Castle, Spring, TX   19-JAN-68 F      25000          4 Administration   987654321         30 Newbenefits              4         30                                                                                                                                                                                                                                                                                                                                             
+ 999887777 Alicia J Zelaya      3321 Castle, Spring, TX   19-JAN-68 F      25000          4 Administration   987654321         10 Computerization          4         10                                                                                                                                                                                                                                                                                                                                             
+ 987654321 Jennifer S Wallace   291 Berry, Bellaire, TX   20-JUN-41 F      43000          4 Administration   888665555         30 Newbenefits              4         20                                                                                                                                                                                                                                                                                                                                             
+ 987654321 Jennifer S Wallace   291 Berry, Bellaire, TX   20-JUN-41 F      43000          4 Administration   888665555         20 Reorganization           1         15                                                                                                                                                                                                                                                                                                                                             
+ 666884444 Ramesh K Narayan     975 Fire Oak, Humble, TX  15-SEP-62 M      38000          5 Research         333445555          3 ProductZ                 5         40                                                                                                                                                                                                                                                                                                                                             
+
+     EMPID NAME                 ADDRESS                   BDATE     S     SALARY        DNO DNAME               MGR_ID        PNO PNAME                 PDNO        HRS                                                                                                                                                                                                                                                                                                                                             
+---------- -------------------- ------------------------- --------- - ---------- ---------- --------------- ---------- ---------- --------------- ---------- ----------                                                                                                                                                                                                                                                                                                                                             
+ 453453453 Joyce A English      5631 Rice, Houston TX     31-JUL-72 F      25000          5 Research         333445555          1 ProductX                 5         20                                                                                                                                                                                                                                                                                                                                             
+ 453453453 Joyce A English      5631 Rice, Houston TX     31-JUL-72 F      25000          5 Research         333445555          2 ProductY                 5         20                                                                                                                                                                                                                                                                                                                                             
+ 987987987 Ahmad V Jabbar       980 Dallas, Houston, TX   29-MAR-69 M      25000          4 Administration   987654321         10 Computerization          4         35                                                                                                                                                                                                                                                                                                                                             
+ 987987987 Ahmad V Jabbar       980 Dallas, Houston, TX   29-MAR-69 M      25000          4 Administration   987654321         30 Newbenefits              4          5                                                                                                                                                                                                                                                                                                                                             
+ 888665555 James E Borg         450 Stone, Houston, TX    10-NOV-37 M      55000          1 Headquarters                       20 Reorganization           1                                                                                                                                                                                                                                                                                                                                                        
+
+16 rows selected.
+
+SQL> 
+SQL> 
+SQL> REM *****************************************************************
+SQL> REM ******************** 3NF TABLES *********************************
+SQL> 
+SQL> REM *****************************************************************
+SQL> REM 4) CREATE ALL THE 3NF RELATIONS (TABLES)
+SQL> REM *****************************************************************
+SQL> 
+SQL> DROP TABLE company_work;
+
+Table dropped.
+
+SQL> DROP TABLE company_project;
+
+Table dropped.
+
+SQL> DROP TABLE company_employee;
+
+Table dropped.
+
+SQL> DROP TABLE company_department;
+
+Table dropped.
+
+SQL> 
+SQL> CREATE TABLE company_department(
+  2  	     dno NUMBER(1) CONSTRAINT dept_pk PRIMARY KEY,
+  3  	     dname VARCHAR2(15),
+  4  	     mgr_id NUMBER(9)
+  5  );
+
+Table created.
+
+SQL> 
+SQL> CREATE TABLE company_employee(
+  2  	     empid NUMBER(9) CONSTRAINT employee_pk PRIMARY KEY,
+  3  	     name VARCHAR2(20),
+  4  	     address VARCHAR2(25),
+  5  	     bdate DATE,
+  6  	     sex CHAR(1),
+  7  	     salary NUMBER(6, 1),
+  8  	     dno NUMBER(1) CONSTRAINT employee_fk references company_department(dno)
+  9  );
+
+Table created.
+
+SQL> 
+SQL> CREATE TABLE company_project(
+  2  	     pno NUMBER(2) CONSTRAINT pjt_pk PRIMARY KEY,
+  3  	     pname VARCHAR2(15),
+  4  	     pdno NUMBER(1)
+  5  );
+
+Table created.
+
+SQL> 
+SQL> CREATE TABLE company_work(
+  2  	     empid NUMBER(9),
+  3  	     pno NUMBER(2),
+  4  	     hrs NUMBER(3,1),
+  5  	     CONSTRAINT work_pk PRIMARY KEY(empid,pno),
+  6  	     CONSTRAINT work_fk1 FOREIGN KEY(empid) REFERENCES company_employee(empid),
+  7  	     CONSTRAINT work_fk2 FOREIGN KEY(pno) REFERENCES company_project(pno)
+  8  );
+
+Table created.
+
+SQL> 
+SQL> REM ************************************************************
+SQL> REM 5) POPULATE EACH AND EVERY RELATIONS
+SQL> REM ************************************************************
+SQL> 
+SQL> INSERT INTO company_department VALUES(5, 'Research', 333445555);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_department VALUES(4, 'Administration', 987654321);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_department VALUES(1, 'Headquarters', 888665555);
+
+1 row created.
+
+SQL> 
+SQL> REM ************************************************************
+SQL> 
+SQL> INSERT INTO company_employee VALUES(123456789, 'John B Smith', '731 Fondren, Houston, TX', '09-Jan-1965', 'M', 30000, 5);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_employee VALUES(333445555, 'Franklin T Wong', '638 Voss, Houston, TX', '08-Dec-1955', 'M', 40000, 5);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_employee VALUES(999887777, 'Alicia J Zelaya', '3321 Castle, Spring, TX', '19-Jan-1968', 'F', 25000, 4);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_employee VALUES(987654321, 'Jennifer S Wallace', '291 Berry, Bellaire, TX', '20-Jun-1941', 'F', 43000, 4);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_employee VALUES(666884444, 'Ramesh K Narayan', '975 Fire Oak, Humble, TX', '15-Sep-1962', 'M', 38000, 5);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_employee VALUES(453453453, 'Joyce A English', '5631 Rice, Houston, TX', '31-Jul-1972', 'F', 25000, 5);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_employee VALUES(987987987, 'Ahmad V Jabbar', '980 Dallas, Houston, TX', '29-Mar-1969', 'M', 25000, 4);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_employee VALUES(888665555, 'James E Borg', '450 Stone, Houston, TX', '10-Nov-1937', 'M', 55000, 1);
+
+1 row created.
+
+SQL> 
+SQL> REM ************************************************************
+SQL> 
+SQL> INSERT INTO company_project VALUES(1, 'ProductX', 5);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_project VALUES(2, 'ProductY', 5);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_project VALUES(3, 'ProductZ', 5);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_project VALUES(10, 'Computerization', 4);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_project VALUES(20, 'Reorganization', 1);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_project VALUES(30, 'Newbenefits', 4);
+
+1 row created.
+
+SQL> 
+SQL> REM ************************************************************
+SQL> 
+SQL> INSERT INTO company_work VALUES(123456789, 1, 32.5);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(123456789, 2, 7.5);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(333445555, 2, 10.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(333445555, 3, 10.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(333445555, 10, 10.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(333445555, 20, 10.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(999887777, 30, 30.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(999887777, 10, 10.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(987654321, 30, 20.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(987654321, 20, 15.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(666884444, 3, 40.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(453453453, 1, 20.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(453453453, 2, 20.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(987987987, 10, 35.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(987987987, 30, 5.0);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO company_work VALUES(888665555, 20, NULL);
+
+1 row created.
+
+SQL> 
+SQL> REM ************************************************************
+SQL> REM 6) DISPLAY (SELECT) ALL 3NF RELATIONS
+SQL> REM ************************************************************
+SQL> 
+SQL> SELECT *
+  2  FROM company_employee;
+
+     EMPID NAME                 ADDRESS                   BDATE     S     SALARY        DNO                                                                                                                                                                                                                                                                                                                                                                                                                         
+---------- -------------------- ------------------------- --------- - ---------- ----------                                                                                                                                                                                                                                                                                                                                                                                                                         
+ 123456789 John B Smith         731 Fondren, Houston, TX  09-JAN-65 M      30000          5                                                                                                                                                                                                                                                                                                                                                                                                                         
+ 333445555 Franklin T Wong      638 Voss, Houston, TX     08-DEC-55 M      40000          5                                                                                                                                                                                                                                                                                                                                                                                                                         
+ 999887777 Alicia J Zelaya      3321 Castle, Spring, TX   19-JAN-68 F      25000          4                                                                                                                                                                                                                                                                                                                                                                                                                         
+ 987654321 Jennifer S Wallace   291 Berry, Bellaire, TX   20-JUN-41 F      43000          4                                                                                                                                                                                                                                                                                                                                                                                                                         
+ 666884444 Ramesh K Narayan     975 Fire Oak, Humble, TX  15-SEP-62 M      38000          5                                                                                                                                                                                                                                                                                                                                                                                                                         
+ 453453453 Joyce A English      5631 Rice, Houston, TX    31-JUL-72 F      25000          5                                                                                                                                                                                                                                                                                                                                                                                                                         
+ 987987987 Ahmad V Jabbar       980 Dallas, Houston, TX   29-MAR-69 M      25000          4                                                                                                                                                                                                                                                                                                                                                                                                                         
+ 888665555 James E Borg         450 Stone, Houston, TX    10-NOV-37 M      55000          1                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+8 rows selected.
+
+SQL> 
+SQL> REM ************************************************************
+SQL> 
+SQL> SELECT *
+  2  FROM company_department;
+
+       DNO DNAME               MGR_ID                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+---------- --------------- ----------                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+         5 Research         333445555                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+         4 Administration   987654321                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+         1 Headquarters     888665555                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+SQL> 
+SQL> REM ************************************************************
+SQL> 
+SQL> SELECT *
+  2  FROM company_project;
+
+       PNO PNAME                 PDNO                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+---------- --------------- ----------                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+         1 ProductX                 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+         2 ProductY                 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+         3 ProductZ                 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        10 Computerization          4                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        20 Reorganization           1                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        30 Newbenefits              4                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+6 rows selected.
+
+SQL> 
+SQL> REM ************************************************************
+SQL> 
+SQL> SELECT *
+  2  FROM company_work;
+
+     EMPID        PNO        HRS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+---------- ---------- ----------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 123456789          1       32.5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 123456789          2        7.5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 333445555          2         10                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 333445555          3         10                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 333445555         10         10                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 333445555         20         10                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 999887777         30         30                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 999887777         10         10                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 987654321         30         20                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 987654321         20         15                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 666884444          3         40                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+     EMPID        PNO        HRS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+---------- ---------- ----------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 453453453          1         20                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 453453453          2         20                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 987987987         10         35                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 987987987         30          5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+ 888665555         20                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+16 rows selected.
+
+SQL> 
+SQL> REM ************************************************************
+SQL> REM TO PROVE LOSSLESS-JOIN PROPERTY:
+SQL> REM 7) PERFORM JOIN / NATURAL JOIN ON ALL THE 3NF RELATIONS.
+SQL> REM ************************************************************
+SQL> 
+SQL> SELECT *
+  2  FROM company_employee NATURAL JOIN company_department
+  3  	  NATURAL JOIN
+  4  	  company_project NATURAL JOIN company_work;
+
+     EMPID        PNO        DNO NAME                 ADDRESS                   BDATE     S     SALARY DNAME               MGR_ID PNAME                 PDNO        HRS                                                                                                                                                                                                                                                                                                                                             
+---------- ---------- ---------- -------------------- ------------------------- --------- - ---------- --------------- ---------- --------------- ---------- ----------                                                                                                                                                                                                                                                                                                                                             
+ 453453453          1          5 Joyce A English      5631 Rice, Houston, TX    31-JUL-72 F      25000 Research         333445555 ProductX                 5         20                                                                                                                                                                                                                                                                                                                                             
+ 123456789          1          5 John B Smith         731 Fondren, Houston, TX  09-JAN-65 M      30000 Research         333445555 ProductX                 5       32.5                                                                                                                                                                                                                                                                                                                                             
+ 453453453          2          5 Joyce A English      5631 Rice, Houston, TX    31-JUL-72 F      25000 Research         333445555 ProductY                 5         20                                                                                                                                                                                                                                                                                                                                             
+ 333445555          2          5 Franklin T Wong      638 Voss, Houston, TX     08-DEC-55 M      40000 Research         333445555 ProductY                 5         10                                                                                                                                                                                                                                                                                                                                             
+ 123456789          2          5 John B Smith         731 Fondren, Houston, TX  09-JAN-65 M      30000 Research         333445555 ProductY                 5        7.5                                                                                                                                                                                                                                                                                                                                             
+ 666884444          3          5 Ramesh K Narayan     975 Fire Oak, Humble, TX  15-SEP-62 M      38000 Research         333445555 ProductZ                 5         40                                                                                                                                                                                                                                                                                                                                             
+ 333445555          3          5 Franklin T Wong      638 Voss, Houston, TX     08-DEC-55 M      40000 Research         333445555 ProductZ                 5         10                                                                                                                                                                                                                                                                                                                                             
+ 987987987         10          4 Ahmad V Jabbar       980 Dallas, Houston, TX   29-MAR-69 M      25000 Administration   987654321 Computerization          4         35                                                                                                                                                                                                                                                                                                                                             
+ 999887777         10          4 Alicia J Zelaya      3321 Castle, Spring, TX   19-JAN-68 F      25000 Administration   987654321 Computerization          4         10                                                                                                                                                                                                                                                                                                                                             
+ 333445555         10          5 Franklin T Wong      638 Voss, Houston, TX     08-DEC-55 M      40000 Research         333445555 Computerization          4         10                                                                                                                                                                                                                                                                                                                                             
+ 888665555         20          1 James E Borg         450 Stone, Houston, TX    10-NOV-37 M      55000 Headquarters     888665555 Reorganization           1                                                                                                                                                                                                                                                                                                                                                        
+
+     EMPID        PNO        DNO NAME                 ADDRESS                   BDATE     S     SALARY DNAME               MGR_ID PNAME                 PDNO        HRS                                                                                                                                                                                                                                                                                                                                             
+---------- ---------- ---------- -------------------- ------------------------- --------- - ---------- --------------- ---------- --------------- ---------- ----------                                                                                                                                                                                                                                                                                                                                             
+ 987654321         20          4 Jennifer S Wallace   291 Berry, Bellaire, TX   20-JUN-41 F      43000 Administration   987654321 Reorganization           1         15                                                                                                                                                                                                                                                                                                                                             
+ 333445555         20          5 Franklin T Wong      638 Voss, Houston, TX     08-DEC-55 M      40000 Research         333445555 Reorganization           1         10                                                                                                                                                                                                                                                                                                                                             
+ 987987987         30          4 Ahmad V Jabbar       980 Dallas, Houston, TX   29-MAR-69 M      25000 Administration   987654321 Newbenefits              4          5                                                                                                                                                                                                                                                                                                                                             
+ 987654321         30          4 Jennifer S Wallace   291 Berry, Bellaire, TX   20-JUN-41 F      43000 Administration   987654321 Newbenefits              4         20                                                                                                                                                                                                                                                                                                                                             
+ 999887777         30          4 Alicia J Zelaya      3321 Castle, Spring, TX   19-JAN-68 F      25000 Administration   987654321 Newbenefits              4         30                                                                                                                                                                                                                                                                                                                                             
+
+16 rows selected.
+
+SQL> 
+SQL> REM ************************************************************
+SQL> 
+SQL> 
+SQL> spool off;
