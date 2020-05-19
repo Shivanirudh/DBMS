@@ -7,24 +7,28 @@ import java.sql.*;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 public class PayrollUI extends javax.swing.JFrame {
     
-    private static TableModel buildTableModel(ResultSet rs) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    Connection conn;
+    
     public PayrollUI() {
         initComponents();
+        try{
+            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
+            conn = DriverManager.getConnection(url, "hr", "hr");
+        }
+        catch(Exception e){
+            System.err.println("Connection Exception!");
+            System.err.println(e.getMessage());
+        }
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        DisplayTab = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -67,14 +71,32 @@ public class PayrollUI extends javax.swing.JFrame {
         jLabel18 = new javax.swing.JLabel();
         searchEmpID = new javax.swing.JTextField();
         searchButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        searchTable = new javax.swing.JTable();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel8 = new javax.swing.JPanel();
+        jLabel22 = new javax.swing.JLabel();
+        SearchValEmpID = new javax.swing.JTextField();
+        jLabel23 = new javax.swing.JLabel();
+        SearchValEmpName = new javax.swing.JTextField();
+        jLabel24 = new javax.swing.JLabel();
+        SearchValEmpSex = new javax.swing.JTextField();
+        jLabel25 = new javax.swing.JLabel();
+        SearchValEmpDesignation = new javax.swing.JTextField();
+        jLabel26 = new javax.swing.JLabel();
+        SearchValEmpDOB = new javax.swing.JTextField();
+        jLabel27 = new javax.swing.JLabel();
+        SearchValEmpBasic = new javax.swing.JTextField();
+        jLabel28 = new javax.swing.JLabel();
+        SearchValEmpNetPay = new javax.swing.JTextField();
         jLabel19 = new javax.swing.JLabel();
-        displayButton = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        displayTable = new javax.swing.JTable();
+        SearchValEmpDA = new javax.swing.JTextField();
+        jLabel29 = new javax.swing.JLabel();
+        SearchValEmpHRA = new javax.swing.JTextField();
+        jLabel30 = new javax.swing.JLabel();
+        SearchValEmpGross = new javax.swing.JTextField();
+        jLabel31 = new javax.swing.JLabel();
+        SearchValEmpPF = new javax.swing.JTextField();
+        jLabel32 = new javax.swing.JLabel();
+        SearchValEmpMC = new javax.swing.JTextField();
+        jLabel33 = new javax.swing.JLabel();
+        SearchValEmpTotDeduc = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         AppLabel = new javax.swing.JLabel();
@@ -86,8 +108,13 @@ public class PayrollUI extends javax.swing.JFrame {
         setForeground(java.awt.Color.white);
         setName("basePage"); // NOI18N
 
-        jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.LEFT);
-        jTabbedPane1.setToolTipText("");
+        DisplayTab.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        DisplayTab.setToolTipText("");
+        DisplayTab.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DisplayTabMouseClicked(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel1.setText("INSERT EMPLOYEE");
@@ -135,7 +162,7 @@ public class PayrollUI extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(149, 343, Short.MAX_VALUE)
+                .addGap(149, 350, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
@@ -196,7 +223,7 @@ public class PayrollUI extends javax.swing.JFrame {
                 .addGap(279, 279, 279))
         );
 
-        jTabbedPane1.addTab("INSERT EMPLOYEE", null, jPanel1, "");
+        DisplayTab.addTab("INSERT EMPLOYEE", null, jPanel1, "");
         jPanel1.getAccessibleContext().setAccessibleName("INSERT EMPLOYEE");
         jPanel1.getAccessibleContext().setAccessibleDescription("Insert Employee");
 
@@ -315,7 +342,7 @@ public class PayrollUI extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(355, Short.MAX_VALUE)
+                .addContainerGap(362, Short.MAX_VALUE)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(128, 128, 128))
         );
@@ -327,7 +354,7 @@ public class PayrollUI extends javax.swing.JFrame {
                 .addContainerGap(249, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("UPDATE EMPLOYEE", jPanel3);
+        DisplayTab.addTab("UPDATE EMPLOYEE", jPanel3);
 
         jLabel15.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel15.setText("DELETE EMPLOYEE");
@@ -351,7 +378,7 @@ public class PayrollUI extends javax.swing.JFrame {
                 .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(326, Short.MAX_VALUE)
+                .addContainerGap(333, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -376,7 +403,7 @@ public class PayrollUI extends javax.swing.JFrame {
                 .addContainerGap(375, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("DELETE EMPLOYEE", jPanel4);
+        DisplayTab.addTab("DELETE EMPLOYEE", jPanel4);
 
         jLabel17.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel17.setText("SEARCH EMPLOYEE");
@@ -397,29 +424,74 @@ public class PayrollUI extends javax.swing.JFrame {
             }
         });
 
-        searchTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+        jLabel22.setText("Employee ID");
 
-            },
-            new String [] {
-                "Employee ID", "Employee Name", "DOB", "Sex", "Designation", "Basic Pay", "Net Pay"
+        jLabel23.setText("Employee Name");
+
+        SearchValEmpName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchValEmpNameActionPerformed(evt);
             }
-        ));
-        jScrollPane1.setViewportView(searchTable);
+        });
+
+        jLabel24.setText("Sex");
+
+        SearchValEmpSex.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchValEmpSexActionPerformed(evt);
+            }
+        });
+
+        jLabel25.setText("Designation");
+
+        SearchValEmpDesignation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchValEmpDesignationActionPerformed(evt);
+            }
+        });
+
+        jLabel26.setText("DoB");
+
+        jLabel27.setText("Basic Pay");
+
+        SearchValEmpBasic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchValEmpBasicActionPerformed(evt);
+            }
+        });
+
+        jLabel28.setText("Net Pay");
+
+        SearchValEmpNetPay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchValEmpNetPayActionPerformed(evt);
+            }
+        });
+
+        jLabel19.setText("DA");
+
+        jLabel29.setText("HRA");
+
+        SearchValEmpHRA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchValEmpHRAActionPerformed(evt);
+            }
+        });
+
+        jLabel30.setText("Gross Pay");
+
+        jLabel31.setText("Provident Fund(PF)");
+
+        jLabel32.setText("Mediclaim(MC)");
+
+        jLabel33.setText("Total Deductions");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(194, 194, 194))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap(310, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                         .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -429,6 +501,73 @@ public class PayrollUI extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                         .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(317, 317, 317))))
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGap(341, 341, 341)
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(SearchValEmpHRA)
+                                    .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(SearchValEmpGross)
+                            .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(SearchValEmpNetPay, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGap(240, 240, 240)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(SearchValEmpPF)
+                                    .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(SearchValEmpMC)
+                                    .addComponent(jLabel32, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(SearchValEmpTotDeduc)
+                                    .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(SearchValEmpDA)
+                                .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)))))
+                .addGap(248, 262, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(194, 194, 194))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(SearchValEmpID, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(SearchValEmpName)
+                            .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
+                            .addComponent(SearchValEmpSex))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(SearchValEmpDesignation, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(SearchValEmpDOB, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(SearchValEmpBasic, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(57, 57, 57))))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -436,14 +575,63 @@ public class PayrollUI extends javax.swing.JFrame {
                 .addGap(24, 24, 24)
                 .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchEmpID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                    .addComponent(searchEmpID))
                 .addGap(14, 14, 14)
                 .addComponent(searchButton)
+                .addGap(46, 46, 46)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(SearchValEmpID, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(SearchValEmpName, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(SearchValEmpSex, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(SearchValEmpDesignation, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(SearchValEmpDOB, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(SearchValEmpBasic, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(42, 42, 42)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(SearchValEmpDA, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(SearchValEmpHRA, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(SearchValEmpGross, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(SearchValEmpPF, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel32, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(SearchValEmpMC, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(SearchValEmpTotDeduc, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(SearchValEmpNetPay, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(110, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -451,7 +639,7 @@ public class PayrollUI extends javax.swing.JFrame {
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addContainerGap(186, Short.MAX_VALUE)
+                .addContainerGap(193, Short.MAX_VALUE)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(145, 145, 145))
         );
@@ -462,80 +650,7 @@ public class PayrollUI extends javax.swing.JFrame {
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jTabbedPane1.addTab("SEARCH EMPLOYEE", jPanel5);
-
-        jLabel19.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel19.setText("DISPLAY EMPLOYEES");
-        jLabel19.setToolTipText("");
-
-        displayButton.setText("Display");
-        displayButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                displayButtonActionPerformed(evt);
-            }
-        });
-
-        displayTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Employee ID", "Employee Name", "DOB", "Sex", "Designation", "Basic Pay", "Net Pay"
-            }
-        ));
-        jScrollPane2.setViewportView(displayTable);
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(200, 200, 200))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                        .addComponent(displayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(301, 301, 301))))
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 793, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(31, Short.MAX_VALUE)
-                .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(displayButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1134, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(0, 165, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 166, Short.MAX_VALUE)))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 596, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel2Layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
-
-        jTabbedPane1.addTab("DISPLAY EMPLOYEES", jPanel2);
+        DisplayTab.addTab("SEARCH EMPLOYEE", jPanel5);
 
         jLabel20.setText("jLabel20");
 
@@ -550,7 +665,7 @@ public class PayrollUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
+                .addComponent(DisplayTab)
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -573,7 +688,7 @@ public class PayrollUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(AppLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1)
+                .addComponent(DisplayTab)
                 .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -587,7 +702,7 @@ public class PayrollUI extends javax.swing.JFrame {
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
 
-        jTabbedPane1.getAccessibleContext().setAccessibleName("");
+        DisplayTab.getAccessibleContext().setAccessibleName("");
 
         getAccessibleContext().setAccessibleName("");
         getAccessibleContext().setAccessibleDescription("");
@@ -595,218 +710,58 @@ public class PayrollUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void updEmpSexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updEmpSexActionPerformed
+    private void DisplayTabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DisplayTabMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_updEmpSexActionPerformed
-
-    private void displayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayButtonActionPerformed
-        // TODO add your handling code here:
-        try{
-            
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
-            Connection conn = DriverManager.getConnection(url,"hr","hr");
-            
-            PreparedStatement ps=conn.prepareStatement("Select eid,ename,dob,sex,designation,basic,net_pay from Employee_Payroll ");
-            ResultSet rs=ps.executeQuery();
-            DefaultTableModel table_model=(DefaultTableModel)displayTable.getModel();
-            table_model.setRowCount(0);
-            int flag=0;
-            while(rs.next())
-            {
-                flag+=1;
-                Object o[]={rs.getInt("eid"),rs.getString("ename"),rs.getString("dob"),rs.getString("sex"),rs.getString("designation"),rs.getString("basic"),rs.getString("net_pay")};
-                table_model.addRow(o);
-                
-            }
-            if(flag==0)
-                JOptionPane.showMessageDialog(this,"No Employees found","Display Results",INFORMATION_MESSAGE);
-        }
-        catch(Exception e){
-            System.err.println(" Display Exception flagged.");
-            JOptionPane.showMessageDialog(this,e);
-        }
-    }//GEN-LAST:event_displayButtonActionPerformed
-
-    private void insButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insButtonActionPerformed
-        // TODO add your handling code here:
-        try {
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
-            Connection conn = DriverManager.getConnection(url,"hr","hr");
-            
-            int eid=Integer.parseInt(insEmpID.getText());
-            String ename=insEmpName.getText();
-            String dob=insEmpDOB.getText();
-            String sex=insEmpSex.getText();
-            String des=insEmpDesignation.getText();
-            Float basic=Float.parseFloat(insEmpBasic.getText());
-            
-            PreparedStatement ps=conn.prepareStatement("INSERT INTO Employee_Payroll(eid,ename,dob,sex,designation,basic) VALUES(?,?,?,?,?,?)");
-            ps.setInt(1,eid);
-            ps.setString(2,ename);
-            ps.setString(3,dob);
-            ps.setString(4,sex);
-            ps.setString(5,des);
-            ps.setFloat(6,basic);
-            ps.executeUpdate();
-            
-            CallableStatement cs = conn.prepareCall("{call calculations(?,?)}");
-            cs.setInt(1,eid);
-            cs.setFloat(2,basic);
-            cs.executeUpdate();
-            JOptionPane.showMessageDialog(this,"Employee Inserted!","Insert Success",INFORMATION_MESSAGE);
-            
-            insEmpID.setText("");
-            insEmpName.setText("");
-            insEmpDOB.setText("");
-            insEmpSex.setText("");
-            insEmpDesignation.setText("");
-            insEmpBasic.setText("");
-            conn.close();
-        } catch (Exception e) {
-            System.err.println("Insert Exception Flagged! ");
-            System.err.println(e.getMessage());
-            JOptionPane.showMessageDialog(this,"Unable to Insert","Insert Error",ERROR_MESSAGE);
-        } 
-    }//GEN-LAST:event_insButtonActionPerformed
-
-    private void updButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updButtonActionPerformed
-        // TODO add your handling code here:
-        try {
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
-            Connection conn = DriverManager.getConnection(url,"hr","hr");
-            
-            int eid=Integer.parseInt(updEmpID.getText());
-            int flag=0;
-            if(!updEmpName.getText().isEmpty()){
-                flag=1;
-                String ename=updEmpName.getText();
-                PreparedStatement ps = conn.prepareStatement("UPDATE Employee_Payroll SET ename=? WHERE eid=?");
-                ps.setInt(2,eid);
-                ps.setString(1,ename);
-                ps.executeUpdate();
-            }
-            if(!updEmpDOB.getText().isEmpty()){
-                flag=1;
-                String dob=updEmpDOB.getText();
-                PreparedStatement ps = conn.prepareStatement("UPDATE Employee_Payroll SET dob=? WHERE eid=?");
-                ps.setInt(2,eid);
-                ps.setString(1,dob);
-                ps.executeUpdate();
-            }
-            if(!updEmpSex.getText().isEmpty()){
-                flag=1;
-                String sex=updEmpSex.getText();
-                PreparedStatement ps = conn.prepareStatement("UPDATE Employee_Payroll SET sex=? WHERE eid=?");
-                ps.setInt(2,eid);
-                ps.setString(1,sex);
-                ps.executeUpdate();
-            }
-            if(!updEmpDesignation.getText().isEmpty()){
-                flag=1;
-                String designation=updEmpDesignation.getText();
-                PreparedStatement ps = conn.prepareStatement("UPDATE Employee_Payroll SET designation=? WHERE eid=?");
-                ps.setInt(2,eid);
-                ps.setString(1,designation);
-                ps.executeUpdate();
-            }
-            if(!updEmpBasic.getText().isEmpty()){
-                flag=1;
-                Float basic=Float.parseFloat(updEmpBasic.getText());
-                PreparedStatement ps = conn.prepareStatement("UPDATE Employee_Payroll SET basic=? WHERE eid=?");
-                ps.setInt(2,eid);
-                ps.setFloat(1,basic);
-                ps.executeUpdate();
-                
-                CallableStatement cs = conn.prepareCall("{call calculations(?,?)}");
-                cs.setInt(1,eid);
-                cs.setFloat(2,basic);
-                cs.executeUpdate();
-            }
-            
-            if(flag>=1){
-                JOptionPane.showMessageDialog(this,"Employee Updated!","Update Success",INFORMATION_MESSAGE);
-            }
-            else{
-                JOptionPane.showMessageDialog(this,"Data missing to complete update.","Update Error",ERROR_MESSAGE);
-            }
-            updEmpID.setText("");
-            updEmpName.setText("");
-            updEmpDOB.setText("");
-            updEmpSex.setText("");
-            updEmpDesignation.setText("");
-            updEmpBasic.setText("");
-            conn.close();
-        } catch (Exception e) {
-            System.err.println("Update Exception flagged! ");
-            System.err.println(e.getMessage());
-            System.err.println(e.getCause());
-            JOptionPane.showMessageDialog(null, "Unable to Update!");
-        } 
-    }//GEN-LAST:event_updButtonActionPerformed
-
-    private void delButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delButtonActionPerformed
-        // TODO add your handling code here:
-        try{
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
-            Connection conn = DriverManager.getConnection(url,"hr","hr");
-            
-            int eid=Integer.parseInt(delEmpID.getText());
-            int flag=0;
-            
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Employee_Payroll WHERE eid=?");
-            ps.setInt(1,eid);
-            
-            ResultSet rs = ps.executeQuery();
-            
-            while(rs.next()){
-                flag+=1;
-            }
-            
-            PreparedStatement stmt=conn.prepareStatement("DELETE FROM Employee_Payroll WHERE eid=?");
-            stmt.setInt(1, eid);
-            stmt.executeUpdate();
-            
-            conn.close();
-            if(flag==0){
-                JOptionPane.showMessageDialog(this,"Employee Record not found","Delete Error",ERROR_MESSAGE);
-            }
-            else{
-                JOptionPane.showMessageDialog(this,"Employee Record Deleted!","Delete Success",INFORMATION_MESSAGE);
-            }
-        }
-        catch(Exception e){
-            System.err.println("Delete Exception flagged! ");
-            System.err.println(e.getMessage());
-            JOptionPane.showMessageDialog(this,"Unable to Delete. ","Delete Error",ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_delButtonActionPerformed
+    }//GEN-LAST:event_DisplayTabMouseClicked
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-    // TODO add your handling code here:
+        // TODO add your handling code here:
         try{
             
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
-            Connection conn = DriverManager.getConnection(url,"hr","hr");
-            
-            int eid=Integer.parseInt(searchEmpID.getText());
-            
-            PreparedStatement ps=conn.prepareStatement("Select * from Employee_payroll WHERE eid="+eid);
-            ResultSet rs=ps.executeQuery();
-            
-            DefaultTableModel table_model=(DefaultTableModel)searchTable.getModel();
-            table_model.setRowCount(0);
-            int flag=0;
-            while(rs.next()){
-                flag+=1;
-                Object o[]={rs.getInt("eid"),rs.getString("ename"),rs.getString("dob"),rs.getString("sex"),rs.getString("designation"),rs.getString("basic"),rs.getString("net_pay")};
-                table_model.addRow(o);
+            if(searchEmpID.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpID value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
             }
-            if(flag==0)
-                JOptionPane.showMessageDialog(this,"Employee not found","Search Results",INFORMATION_MESSAGE);
+
+            int eid = Integer.parseInt(searchEmpID.getText());
+
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Employee_payroll WHERE eid = ?");
+            ps.setInt(1, eid);
+            ResultSet rs = ps.executeQuery();
+
+            int count = 0;
+            String empid = null, ename = null, dob = null, sex = null, designation = null, basic = null;
+            String da = null, hra = null, gross = null;
+            String pf = null, mc = null, tot_deduc = null;
+            String net_pay = null;
+            
+            while(rs.next()){
+                count+=1;
+                            
+                empid = rs.getString("eid");ename = rs.getString("ename");dob = rs.getString("dob");
+                sex = rs.getString("sex");designation = rs.getString("designation");basic = rs.getString("basic");
+                da = rs.getString("da");hra = rs.getString("hra");gross = rs.getString("gross");
+                pf = rs.getString("pf");mc = rs.getString("mc");tot_deduc = rs.getString("tot_deduc");
+                net_pay = rs.getString("net_pay");
+            }       
+ 
+            if(count == 0)
+                JOptionPane.showMessageDialog(this, "Employee not found", "Search Results", INFORMATION_MESSAGE);
+            else{
+                SearchValEmpID.setText(empid);SearchValEmpName.setText(ename);SearchValEmpDOB.setText(dob);
+                SearchValEmpSex.setText(sex);SearchValEmpDesignation.setText(designation);SearchValEmpBasic.setText(basic);
+                SearchValEmpDA.setText(da);SearchValEmpHRA.setText(hra);SearchValEmpGross.setText(gross);
+                SearchValEmpPF.setText(pf);SearchValEmpMC.setText(mc);SearchValEmpTotDeduc.setText(tot_deduc);
+                SearchValEmpNetPay.setText(net_pay);
+            }
         }
         catch(Exception e){
-            System.err.println("Search Exception Flagged.");
-            JOptionPane.showMessageDialog(this,e);
+            System.err.println("Search Exception!");
+            System.err.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, "Unable to Search. ", "Search Error", ERROR_MESSAGE);
+        }
+        finally{
+            searchEmpID.setText("");
         }
     }//GEN-LAST:event_searchButtonActionPerformed
 
@@ -814,17 +769,220 @@ public class PayrollUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_searchEmpIDActionPerformed
 
-    private void insEmpDOBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insEmpDOBActionPerformed
+    private void delButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_insEmpDOBActionPerformed
+        try{
+            
+            if(delEmpID.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpID value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+
+            int eid = Integer.parseInt(delEmpID.getText());
+            int count = 0;
+
+            PreparedStatement check_stmt = conn.prepareStatement("SELECT * FROM Employee_Payroll WHERE eid = ?");
+            check_stmt.setInt(1, eid);
+
+            ResultSet rs = check_stmt.executeQuery();
+
+            while(rs.next()){
+                count += 1;
+            }
+
+            if(count == 0){
+                JOptionPane.showMessageDialog(this, "Employee Record not found", "Delete Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+
+            PreparedStatement del_stmt = conn.prepareStatement("DELETE FROM Employee_Payroll WHERE eid = ?");
+            del_stmt.setInt(1, eid);
+            del_stmt.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Employee Record Deleted!", "Delete Success", INFORMATION_MESSAGE);
+        }
+        catch(Exception e){
+            System.err.println("Delete Exception! ");
+            System.err.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, "Unable to Delete. ", "Delete Error", ERROR_MESSAGE);
+        }
+        finally{
+            delEmpID.setText("");
+        }
+    }//GEN-LAST:event_delButtonActionPerformed
+
+    private void updEmpSexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updEmpSexActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_updEmpSexActionPerformed
+
+    private void updButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            
+            if(updEmpID.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpID value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+            if(updEmpName.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpName value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+            if(updEmpDOB.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpDOB value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+            if(updEmpSex.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpSex value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+            if(updEmpDesignation.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpDesignation value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+            if(updEmpBasic.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpBasic value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+
+            int eid = Integer.parseInt(updEmpID.getText());
+            String ename = updEmpName.getText();
+            String dob = updEmpDOB.getText();
+            String sex = updEmpSex.getText();
+            String designation = updEmpDesignation.getText();
+            Float basic = Float.parseFloat(updEmpBasic.getText());
+
+            PreparedStatement ps = conn.prepareStatement("UPDATE Employee_Payroll SET ename = ?, dob = ?, sex = ?, designation = ?, basic = ? WHERE eid = ?");
+            ps.setString(1, ename);
+            ps.setString(2, dob);
+            ps.setString(3, sex);
+            ps.setString(4, designation);
+            ps.setFloat(5, basic);
+            ps.setInt(6, eid);
+            ps.executeUpdate();
+
+            CallableStatement cs = conn.prepareCall("{call calculations(?,?)}");
+            cs.setInt(1,eid);
+            cs.setFloat(2,basic);
+            cs.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Employee Updated!", "Update Success", INFORMATION_MESSAGE);
+
+        } catch (Exception e) {
+            System.err.println("Update Exception! ");
+            System.err.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, "Unable to update", "Update Error", ERROR_MESSAGE);
+        }
+        finally{
+            updEmpID.setText("");
+            updEmpName.setText("");
+            updEmpDOB.setText("");
+            updEmpSex.setText("");
+            updEmpDesignation.setText("");
+            updEmpBasic.setText("");
+        }
+    }//GEN-LAST:event_updButtonActionPerformed
+
+    private void insEmpBasicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insEmpBasicActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_insEmpBasicActionPerformed
 
     private void insEmpDesignationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insEmpDesignationActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_insEmpDesignationActionPerformed
 
-    private void insEmpBasicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insEmpBasicActionPerformed
+    private void insEmpDOBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insEmpDOBActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_insEmpBasicActionPerformed
+    }//GEN-LAST:event_insEmpDOBActionPerformed
+
+    private void insButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+
+            if(insEmpID.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpID value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+            if(insEmpName.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpName value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+            if(insEmpDOB.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpDOB value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+            if(insEmpSex.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpSex value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+            if(insEmpDesignation.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpDesignation value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+            if(insEmpBasic.getText().isEmpty()){
+                JOptionPane.showMessageDialog(this, "Missing EmpBasic value", "Value Error", ERROR_MESSAGE);
+                throw new Exception();
+            }
+
+            int eid = Integer.parseInt(insEmpID.getText());
+            String ename = insEmpName.getText();
+            String dob = insEmpDOB.getText();
+            String sex = insEmpSex.getText();
+            String des = insEmpDesignation.getText();
+            Float basic = Float.parseFloat(insEmpBasic.getText());
+
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO Employee_Payroll(eid, ename, dob, sex, designation, basic) VALUES(?, ?, ?, ?, ?, ?)");
+            ps.setInt(1, eid);
+            ps.setString(2, ename);
+            ps.setString(3, dob);
+            ps.setString(4, sex);
+            ps.setString(5, des);
+            ps.setFloat(6, basic);
+            ps.executeUpdate();
+
+            CallableStatement cs = conn.prepareCall("{call calculations(?, ?)}");
+            cs.setInt(1, eid);
+            cs.setFloat(2, basic);
+            cs.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Employee Inserted!", "Insert Success", INFORMATION_MESSAGE);
+
+        } catch (Exception e) {
+            System.err.println("Insert Exception! ");
+            System.err.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, "Unable to Insert", "Insert Error", ERROR_MESSAGE);
+        }
+        finally{
+            insEmpID.setText("");
+            insEmpName.setText("");
+            insEmpDOB.setText("");
+            insEmpSex.setText("");
+            insEmpDesignation.setText("");
+            insEmpBasic.setText("");
+        }
+    }//GEN-LAST:event_insButtonActionPerformed
+
+    private void SearchValEmpNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchValEmpNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SearchValEmpNameActionPerformed
+
+    private void SearchValEmpDesignationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchValEmpDesignationActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SearchValEmpDesignationActionPerformed
+
+    private void SearchValEmpSexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchValEmpSexActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SearchValEmpSexActionPerformed
+
+    private void SearchValEmpBasicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchValEmpBasicActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SearchValEmpBasicActionPerformed
+
+    private void SearchValEmpNetPayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchValEmpNetPayActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SearchValEmpNetPayActionPerformed
+
+    private void SearchValEmpHRAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchValEmpHRAActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SearchValEmpHRAActionPerformed
 
     /**
      * @param args the command line arguments
@@ -859,14 +1017,29 @@ public class PayrollUI extends javax.swing.JFrame {
                 new PayrollUI().setVisible(true);
             }
         });
+        
+        PayrollUI app = new PayrollUI();
+        app.setVisible(true);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel AppLabel;
+    private javax.swing.JTabbedPane DisplayTab;
+    private javax.swing.JTextField SearchValEmpBasic;
+    private javax.swing.JTextField SearchValEmpDA;
+    private javax.swing.JTextField SearchValEmpDOB;
+    private javax.swing.JTextField SearchValEmpDesignation;
+    private javax.swing.JTextField SearchValEmpGross;
+    private javax.swing.JTextField SearchValEmpHRA;
+    private javax.swing.JTextField SearchValEmpID;
+    private javax.swing.JTextField SearchValEmpMC;
+    private javax.swing.JTextField SearchValEmpName;
+    private javax.swing.JTextField SearchValEmpNetPay;
+    private javax.swing.JTextField SearchValEmpPF;
+    private javax.swing.JTextField SearchValEmpSex;
+    private javax.swing.JTextField SearchValEmpTotDeduc;
     private javax.swing.JButton delButton;
     private javax.swing.JTextField delEmpID;
-    private javax.swing.JButton displayButton;
-    private javax.swing.JTable displayTable;
     private javax.swing.JButton insButton;
     private javax.swing.JTextField insEmpBasic;
     private javax.swing.JTextField insEmpDOB;
@@ -888,7 +1061,19 @@ public class PayrollUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -896,19 +1081,13 @@ public class PayrollUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton searchButton;
     private javax.swing.JTextField searchEmpID;
-    private javax.swing.JTable searchTable;
     private javax.swing.JButton updButton;
     private javax.swing.JTextField updEmpBasic;
     private javax.swing.JTextField updEmpDOB;
